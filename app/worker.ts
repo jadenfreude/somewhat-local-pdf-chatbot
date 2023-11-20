@@ -6,7 +6,8 @@ import { WebPDFLoader } from "langchain/document_loaders/web/pdf";
 import { HuggingFaceTransformersEmbeddings } from "langchain/embeddings/hf_transformers";
 import { VoyVectorStore } from "langchain/vectorstores/voy";
 //import { ChatOllama } from "langchain/chat_models/ollama";
-import { HuggingFaceInference } from "langchain/llms/hf";
+//import { HuggingFaceInference } from "langchain/llms/hf";
+import { ChatOpenAI } from "langchain/chat_models/openai";
 import { Document } from "langchain/document";
 import {
   ChatPromptTemplate,
@@ -26,9 +27,10 @@ const embeddings = new HuggingFaceTransformersEmbeddings({
 
 const voyClient = new VoyClient();
 const vectorstore = new VoyVectorStore(voyClient, embeddings);
-const model = new HuggingFaceInference({
-  model: "mistralai/Mistral-7B-v0.1",
-  apiKey: "process.env.API_URL",
+const model = new OpenAI({
+  modelName: "gpt-3.5-turbo-instruct",
+  temperature: 0.2,
+  openAIApiKey: "process.env.API_URL",
 });
 
 const REPHRASE_QUESTION_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
