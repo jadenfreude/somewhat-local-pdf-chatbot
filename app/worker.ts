@@ -28,7 +28,7 @@ const voyClient = new VoyClient();
 const vectorstore = new VoyVectorStore(voyClient, embeddings);
 const model = new HuggingFaceInference({
   model: "mistralai/Mistral-7B-v0.1",
-  apiKey: "key",
+  apiKey: "process.env.API_URL",
 });
 
 const REPHRASE_QUESTION_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
