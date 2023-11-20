@@ -5,7 +5,8 @@ import { Voy as VoyClient } from "voy-search";
 import { WebPDFLoader } from "langchain/document_loaders/web/pdf";
 import { HuggingFaceTransformersEmbeddings } from "langchain/embeddings/hf_transformers";
 import { VoyVectorStore } from "langchain/vectorstores/voy";
-import { ChatOllama } from "langchain/chat_models/ollama";
+//import { ChatOllama } from "langchain/chat_models/ollama";
+import { HuggingFaceInference } from "langchain/llms/hf";
 import { Document } from "langchain/document";
 import {
   ChatPromptTemplate,
@@ -25,10 +26,9 @@ const embeddings = new HuggingFaceTransformersEmbeddings({
 
 const voyClient = new VoyClient();
 const vectorstore = new VoyVectorStore(voyClient, embeddings);
-const ollama = new ChatOllama({
-  baseUrl: "http://localhost:11435",
-  temperature: 0.3,
-  model: "mistral",
+const model = new HuggingFaceInference({
+  model: "mistralai/Mistral-7B-v0.1",
+  apiKey: "key",
 });
 
 const REPHRASE_QUESTION_TEMPLATE = `Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
@@ -126,13 +126,13 @@ const queryVectorStore = async (messages: ChatWindowMessage[]) => {
   const chatHistory: ChatWindowMessage[] = messages.slice(0, -1);
 
   const retrievalChain = createRetrievalChain(
-    ollama,
+    model,
     vectorstore.asRetriever(),
     chatHistory,
   );
   const responseChain = RunnableSequence.from([
     responseChainPrompt,
-    ollama,
+    model,
     new StringOutputParser(),
   ]);
 
